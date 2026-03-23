@@ -1,0 +1,127 @@
+# FLRSA: Fast & Lightweight RSA
+### *Combinatorial Cryptography via Stirling Matrix B, Pascal Triangle P, and Summation Matrix L*
+
+**FLRSA** is an experimental asymmetric encryption algorithm. While standard RSA relies on heavy modular exponentiation ($c^d \pmod n$), FLRSA leverages the algebraic properties of the **Surjection Matrix (Matrix B)** and the **Summation Operator (Matrix L)** to decrypt messages using a lightweight **polynomial dot product**.
+
+---
+
+## 🧩 Mathematical Foundations
+
+### 1. The Surjection Matrix ($B$)
+The heart of this project is **Matrix $B$**, where each element $b_{i,j}$ represents the number of surjections from a set of size $j$ to a set of size $i$ (also known as ordered Stirling numbers of the second kind). It is defined by the fundamental recurrence:
+$$b_{i,j} = i(b_{i-1,j-1} + b_{i,j-1})$$
+This matrix serves as the transition operator between the binomial basis and the power basis.
+
+### 2. Operator Algebra: $L \times P \times B$
+FLRSA utilizes a triplet of matrices to decompose and simplify power calculations:
+* **$P$ (Pascal Matrix)**: Contains binomial coefficients $\binom{n}{k}$.
+* **$B$ (Surjection Matrix)**: Transforms binomial coordinates into power values.
+* **$L$ (Summation Matrix)**: A lower triangular matrix of ones that acts as a **discrete integration operator**.
+
+**The Fundamental Identity:**
+$$P \times B = M \quad \text{where } M_{i,j} = i^j$$
+
+By applying the **Matrix $L$** to $P$, we generate a "shifted" Pascal triangle ($\binom{n+1}{k+1}$), which, according to the **Hockey-stick identity**, allows us to compute the sum of powers by simply traversing the diagonals of the combinatorial space.
+
+
+
+### 3. Modular Resonance & Euler's Theorem
+Traditional RSA relies on $m \equiv c^d \pmod n$ where $ed \equiv 1 \pmod{\phi(n)}$. FLRSA observes the behavior of **Matrix $B \pmod n$**:
+* **Sawtooth Periodicity**: Modulo $n$, the coefficients of $B$ exhibit periodic "resonance".
+* **Pivot Exponent ($d_0$)**: Using Carmichael's function $\lambda(n)$, we identify a pivot exponent $d_0$ where the matrix $B$ acts as a modular identity or collapses into highly symmetric forms.
+
+---
+
+## ⚡ The FLRSA Innovation: Decryption via Integration
+
+### The Combinatorial Dot Product
+Instead of calculating $c^d \pmod n$, which requires $O(\log d)$ modular multiplications, FLRSA treats the ciphertext $c$ as an index in a combinatorial expansion.
+
+**Decryption Steps:**
+1.  **Pascal Coordinates**: Calculate the first three terms of the $c$-th row of Pascal's Triangle:
+    * $T_1 = c$
+    * $T_2 = \frac{c(c-1)}{2}$
+    * $T_3 = \frac{c(c-1)(c-2)}{6}$
+2.  **Symmetry Exploitation**: For a pivot $d_0$ where $gcd(p-1, q-1) = 2$, we exploit the modular property:
+    $$B_{3,d_0} \equiv B_{2,d_0} \pmod n$$
+3.  **Linear Reconstruction**: The plaintext is recovered via a simple linear combination:
+    $$m_{d_0} = (c + B_{2,d_0} \cdot (T_2 + T_3)) \pmod n$$
+
+
+
+---
+
+## 🚀 Performance & Efficiency
+
+| Feature | Standard RSA | FLRSA |
+| :--- | :--- | :--- |
+| **Operation** | Modular Exponentiation | Polynomial Dot Product |
+| **Complexity** | $O(\log d)$ multiplications | $O(1)$ fixed operations |
+| **Computational Cost** | ~3000 modular mult. (2048-bit) | **< 10 modular mult.** |
+| **Hardware Target** | High-performance CPUs | **Ultra-lightweight : IoT / HSM / Embedded System** |
+
+---
+
+## 🛡️ Security Expertise & Cryptanalysis
+
+The **FLRSA** algorithm is designed with a focus on both efficiency and resilience against known cryptographic vulnerabilities. Below is an analysis of potential attack vectors and the implemented countermeasures.
+
+---
+
+### 1. Resistance to Small Private Exponents ($d_p$, $d_q$)
+In standard RSA implementations, using small private exponents (via the Chinese Remainder Theorem) can expose the system to lattice-based attacks or timing attacks.
+
+* **Vulnerability:** Attackers may attempt to recover secret factors if $d_p$ and $d_q$ are too small.
+* **FLRSA Countermeasure:** Following the security recommendations of **David Vigilant** (*"RSA with Unknown Public Exponent"*, CT-RSA 2008), FLRSA is optimized for embedded systems where the **Public Exponent is kept unknown**. By not broadcasting the public key in sensitive environments, we significantly increase the complexity of the attack surface, preventing the mathematical shortcuts required for exponent-based recovery.
+    > Reference: [David Vigilant, Springer - CT-RSA 2008](https://link.springer.com/chapter/10.1007/978-3-540-85053-3_9)
+
+---
+
+### 2. Protection against Chosen Plaintext Attacks (CPA)
+As analyzed by **Burt Kaliski**, deterministic encryption schemes (where the same message always produces the same ciphertext) are vulnerable to dictionary attacks or plaintext analysis.
+
+* **Vulnerability:** Without randomness, an attacker can encrypt guesses of the message and compare them to the intercepted ciphertext.
+* **FLRSA Countermeasure:** To mitigate this, FLRSA supports integration with padding schemes like **RSA-OAEP** or **PKCS #1 v1.5**. 
+    * **RSA-OAEP** is the preferred method as it introduces random bits (salts) into the "message" before encryption. 
+    * Since these bits are unknown to the attacker, even identical messages will result in different ciphertexts, neutralizing the attack vector described by Kaliski.
+    * *Note:* Using FLRSA without random padding (similar to RSA-FDH) is discouraged for high-security transit.
+
+---
+
+### 3. Algebraic Optimization (Cubic Expansion)
+The recent transition to the **Cubic Formula** ($c^3 - c$) not only improves performance but also reduces the implementation footprint. By removing the need for modular inversion of 2 ($inv2$) at runtime, we reduce the risk of **Side-Channel Attacks** (SCA) related to complex modular arithmetic units in hardware.
+
+## 📜 License
+This project is licensed under the **MIT License**. 
+
+Copyright (c) 2026 Mohamed Bachkat 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+By contributing to this project, you agree that your contributions will be licensed under its MIT License.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Contact
+
+If you have any questions or would like to collaborate, feel free to reach out via email:
+[mbachkat@gmail.com](mailto:mbachkat@gmail.com)
+
+
+## 🛠️ Project Structure
+
+```text
+FLRSA/
+├── src/
+│   ├── __init__.py    # Python package marker
+│   ├── keygen.py      # Generation of d0, B2, and modular constants
+│   ├── cipher.py      # Standard RSA encryption (e=65537)
+│   └── decipher.py    # Combinatorial dot product decryption
+├── requirements.txt   # Dependencies (sympy)
+├── test.py            # 1024-bit validation suite
+└── LICENSE            # MIT License terms
+
+
+---
