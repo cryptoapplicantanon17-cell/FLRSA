@@ -4,30 +4,36 @@ from src.decipher import decrypt_flrsa
 import time
 
 def run_test():
-    print("--- Génération des clés FLRSA (1024 bits) ---")
+    #print("--- Génération des clés FLRSA (1024 bits) ---")
+    print("--- FLRSA keys generator (1024 bits) ---")
     start = time.time()
     pub, priv = generate_flrsa_keys(1024)
-    print(f"Clés générées en {time.time() - start:.2f}s")
+    #print(f"Clés générées en {time.time() - start:.2f}s")
+    print(f"Keys generated at {time.time() - start:.2f}s")
     
     message = 123456789
-    print(f"\nMessage original : {message}")
+    #print(f"\nMessage original : {message}")
+    print(f"\nOriginal message : {message}")
     
-    # Chiffrement
+    # Cypher
     c = encrypt(message, pub)
-    print(f"Message chiffré (début) : {str(c)[:50]}...")
+    #print(f"Message chiffré (début) : {str(c)[:50]}...")
+    print(f"cyphertext (begin) : {str(c)[:50]}...")
     
-    # Déchiffrement FLRSA
+    # FLRSA decypher
     start_dec = time.time()
     m_decoded = decrypt_flrsa(c, priv)
     end_dec = time.time()
     
-    print(f"\nMessage déchiffré : {m_decoded}")
-    print(f"Temps de déchiffrement FLRSA : {end_dec - start_dec:.6f}s")
+    print(f"\nDecyphered message : {m_decoded}")
+    print(f"FLRSA decypher time: {end_dec - start_dec:.6f}s")
     
     if message == m_decoded:
-        print("\nSUCCÈS : Le déchiffrement combinatoire fonctionne !")
+        #print("\nSUCCÈS : Le déchiffrement combinatoire fonctionne !")
+        print("\nSUCCES : binomial decypher works !")
     else:
-        print("\nÉCHEC : Erreur dans les coefficients.")
+        #print("\nÉCHEC : Erreur dans les coefficients.")
+        print("\n FAILED : Error in computation.")
 
 if __name__ == "__main__":
     run_test()
