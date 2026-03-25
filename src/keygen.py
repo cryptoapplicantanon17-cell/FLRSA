@@ -2,7 +2,7 @@ import secrets
 from sympy import isprime, inverse_mod, gcd
 
 def generate_flrsa_keys(bits=1024):
-    # 1. Génération de p et q avec pgcd(p-1, q-1) == 2
+    
     # 1. Generation of p and q where gcd(p-1, q-1) equals 2
     while True:
         p = secrets.randprime(2**(bits//2 - 1), 2**(bits//2))
@@ -13,7 +13,6 @@ def generate_flrsa_keys(bits=1024):
     n = p * q
     phi = (p - 1) * (q - 1)
     
-    # 2. Calcul de d0 via Euclide étendu sur (p-1) et (q-1)
     # 2. Compute d0 using Extended Euclid on (p-1) and (q-1)
     # alpha(p-1) + beta(q-1) = 2
     def extended_gcd(a, b):
@@ -24,19 +23,16 @@ def generate_flrsa_keys(bits=1024):
     g, alpha, beta = extended_gcd(p-1, q-1)
     d0 = (alpha * (p-1) + 1) if alpha > 0 else (beta * (q-1) + 1)
     
-    # 3. Choix de d (proche de d0) et calcul de delta
     # 3. Selection of d (near d0) and computation of delta
     d = d0 + 1
     while not isprime(d):
         d += 1
     delta = d - d0
     
-    # 4. Exposant public e
     # 4. Computing the public exponent e
     e = inverse_mod(d, phi)
     
-    # 5. Pré-calculs combinatoires
-    # Combinatorial precomputations
+    # 5. Combinatorial precomputations
     inv6 = inverse_mod(6, n)
     # B2,d0 = 2^d0 - 2 mod n
     b2_d0 = (pow(2, d0, n) - 2) % n
