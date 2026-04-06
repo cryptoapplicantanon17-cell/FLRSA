@@ -1,0 +1,45 @@
+import secrets
+from sympy import isprime, mod_inverse, gcd, randprime
+
+def generate_flrsa_keys(bits=1024):
+    
+    # 1. Generation of p and q where gcd(p-1, q-1) equals 2
+    while True:
+        p = randprime(2**(bits//2 - 1), 2**(bits//2))
+        q = randprime(2**(bits//2 - 1), 2**(bits//2))
+        if p != q and gcd(p-1, q-1) == 2:
+            break
+            
+    n = p * q
+    phi = (p - 1) * (q - 1)
+    
+    # 2. Compute d0 using Extended Euclid on (p-1) and (q-1)
+    # alpha(p-1) + beta(q-1) = 2
+    def extended_gcd(a, b):
+        if a == 0: return b, 0, 1
+        g, x1, y1 = extended_gcd(b % a, a)
+        return g, y1 - (b // a) * x1, x1
+
+    g, alpha, beta = extended_gcd(p-1, q-1)
+    d0 = (alpha * (p-1) + 1) if alpha > 0 else (beta * (q-1) + 1)
+    
+    # 3. Selection of d (near d0) and computation of delta
+    d = d0 + 1
+    while not isprime(d):
+        d += 1
+    delta = d - d0
+    
+    # 4. Computing the public exponent e
+    e = mod_inverse(d, phi)
+    
+    # 5. Combinatorial precomputations
+    inv6 = mod_inverse(6, n)
+    # B2,d0 = 2^d0 - 2 mod n
+    b2_d0 = (pow(2, d0, n) - 2) % n
+    
+    public_key = {'e': e, 'n': n}
+    private_key = {
+        'd0': d0, 'delta': delta, 'B2': b2_d0, 
+         'inv6': inv6, 'n': n,'d':d
+    }
+    return public_key, private_key
