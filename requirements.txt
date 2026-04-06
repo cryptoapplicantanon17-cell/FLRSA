@@ -1,7 +1,7 @@
 # --- Core Dependencies ---
 # Sympy is required for prime number generation, 
 # modular inverse calculations, and the Extended Euclidean Algorithm.
-(sympy>=1.12)
+#(sympy>=1.12)
 sympy==1.14.0
 mpmath>=1.1.0
 # --- Security & Cryptography ---
