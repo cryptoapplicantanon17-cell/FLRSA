@@ -5,7 +5,7 @@ import time
 def standarddecrypt(cyphertext, private_key):
     d = private_key['d']
     n = private_key['n']
-    # Standard RSA cipher
+    # Standard RSA decipher
     return pow(cyphertext, d, n)
 def run_test():
    
