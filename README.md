@@ -99,7 +99,7 @@ FLRSA/
 ├── src/
 │   ├── __init__.py    # Python package marker
 │   ├── keygen.py      # Generation of d0, B2, and modular constants
-│   ├── cipher.py      # Standard RSA encryption (e=65537)
+│   ├── cipher.py      # Standard RSA encryption
 │   └── decipher.py    # Combinatorial dot product decryption
 ├── requirements.txt   # Dependencies (sympy)
 ├── test.py            # 1024-bit validation suite
