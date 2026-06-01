@@ -25,12 +25,12 @@ def run_test():
     print(f"cyphertext (begin) : {str(c)[:50]}...")
     
     # FLRSA decypher
-    start_dec = time.time()
+    start_dec = time.perf_counter_ns()
     m_decoded = decrypt_flrsa(c, priv)
-    end_dec = time.time()
-    start_dec1 = time.time()
+    end_dec = time.perf_counter_ns()
+    start_dec1 = time.perf_counter_ns()
     m_decoded1 = standarddecrypt(c,priv)
-    end_dec1 = time.time()
+    end_dec1 = time.perf_counter_ns()
     
     
     print(f"\nDecyphered message with FLRSA : {m_decoded}")
