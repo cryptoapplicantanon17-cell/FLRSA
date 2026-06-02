@@ -31,13 +31,14 @@ def run_test():
     start_dec1 = time.perf_counter_ns()
     m_decoded1 = standarddecrypt(c,priv)
     end_dec1 = time.perf_counter_ns()
+    ratiodec = (end_dec1-start_dec1)/(end_dec-start_dec)
     
     
     print(f"\nDecyphered message with FLRSA : {m_decoded}")
-    print(f"FLRSA decypher time: {end_dec - start_dec:.6f}s")
+    print(f"FLRSA decypher time: {end_dec - start_dec:.6f}")
     print(f"\nStandard Decyphered message : {m_decoded1}")
-    print(f"Standard decypher time: {end_dec1 - start_dec1:.6f}s")
-    
+    print(f"Standard decypher time: {end_dec1 - start_dec1:.6f}")
+    print("ratio:",ratiodec)
     if message == m_decoded:
       
         print("\nSUCCES : binomial decypher works !")
