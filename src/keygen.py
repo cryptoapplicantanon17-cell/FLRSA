@@ -42,4 +42,5 @@ def generate_flrsa_keys(bits=1024):
         'd0': d0, 'delta': delta, 'B2': b2_d0, 
          'inv6': inv6, 'n': n,'d':d
     }
+    print("delta:",delta)
     return public_key, private_key
