@@ -10,7 +10,7 @@ def standarddecrypt(cyphertext, private_key):
 def run_test():
    
     print("--- FLRSA keys generator (1024 bits) ---")
-    start = time.time()
+    
     pub, priv = generate_flrsa_keys(1024)
    
     #print(f"Keys generated at {time.time() - start:.2f}s")
