@@ -13,7 +13,7 @@ def run_test():
     
     pub, priv = generate_flrsa_keys(1024)
    
-    #print(f"Keys generated at {time.time() - start:.2f}s")
+    
     
     message = 123456789
    
